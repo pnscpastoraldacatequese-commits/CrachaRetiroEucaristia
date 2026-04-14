@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crachás - 4 por página</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .controls textarea {
+            width: 80vw;
+            max-width: 600px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .container {
+            width: 21cm;
+            min-height: 29.7cm;
+            background-color: white;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: flex-start;
+            padding: 1cm 0;
+            box-sizing: border-box;
+        }
+        .cracha {
+            width: 9.5cm;
+            height: 13cm; /* Ajustado para caber 4 em um A4 */
+            border: 1px solid #ddd;
+            margin: 0.2cm;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            background-color: #fff;
+            box-sizing: border-box;
+            
+            /* IMAGEM DE FUNDO */
+            background-image: url('URL_DA_SUA_IMAGEM_AQUI');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .image-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 10px 20px;
+            position: absolute;
+            top: 0;
+            box-sizing: border-box;
+        }
+        
+        .nome {
+            font-size: 38px;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 0 15px;
+            z-index: 2;
+            background-color: rgba(255,255,255,0.7); /* Fundo semi-transparente para leitura */
+            border-radius: 5px;
+        }
+
+        @media print {
+            @page { size: A4; margin: 0; }
+            body { background-color: white; padding: 0; }
+            .controls { display: none; }
+            .container { box-shadow: none; padding: 0; width: 21cm; height: 29.7cm; }
+            .cracha { 
+                border: 1px solid #ccc; /* Borda suave para corte */
+                page-break-inside: avoid;
+            }
+            /* Quebra de página a cada 4 crachás */
+            .cracha:nth-child(4n+1) { page-break-before: always; }
+            .cracha:nth-child(1) { page-break-before: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <label>Cole a lista de nomes:</label>
+        <textarea id="inputNomesFinal" rows="10" placeholder="Nome 1, Nome 2..."></textarea>
+        <div class="btn-container">
+            <button class="btn" onclick="gerarCrachas()">Gerar Crachás</button>
+            <button class="btn" onclick="window.print()">Imprimir</button>
+        </div>
+    </div>
+
+    <div class="container" id="printContainer"></div>
+
+    <script>
+        function gerarCrachas() {
+            const nomesInput = document.getElementById('inputNomesFinal').value;
+            const nomes = nomesInput.split(/[,\n]/).map(n => n.trim()).filter(n => n.length > 0);
+            const container = document.getElementById('printContainer');
+            container.innerHTML = '';
+
+            nomes.forEach(nome => {
+                const cracha = document.createElement('div');
+                cracha.className = 'cracha';
+
+                const imagesDiv = document.createElement('div');
+                imagesDiv.className = 'image-container';
+
+                imagesDiv.appendChild(imgP);
+                imagesDiv.appendChild(imgN);
+                
+                const nomeH1 = document.createElement('h1');
+                nomeH1.className = 'nome';
+                nomeH1.textContent = nome.toUpperCase();
+
+                cracha.appendChild(imagesDiv);
+                cracha.appendChild(nomeH1);
+                container.appendChild(cracha);
+            });
+        }
+    </script>
+</body>
+</html>

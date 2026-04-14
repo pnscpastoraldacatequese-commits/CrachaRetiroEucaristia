@@ -76,16 +76,28 @@
         }
         
         .nome {
-            font-size: 48px;
-            font-weight: 800;
-            text-align: center;
-            text-transform: uppercase;
-            width: 90%;
-            word-wrap: break-word;
-            /* Se o fundo for escuro, mude color para white */
-            color: #000; 
-            /* Opcional: sombra leve para destacar o nome do fundo */
-            text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+        /* 1. MUDANÇA: Tamanho máximo da fonte menor para começar mais equilibrado */
+        font-size: 36px; 
+        font-weight: 800;
+        text-align: center;
+        text-transform: uppercase;
+        
+        /* 2. MUDANÇA: Define uma largura segura (com margem lateral) */
+        width: 8.5cm; /* Largura total de 10.5cm - 1cm de margem de cada lado */
+        
+        /* 3. MUDANÇA: A mágica para adaptar o texto ao espaço */
+        word-wrap: break-word; /* Permite quebrar a palavra se necessário */
+        word-break: break-all; /* Força quebra em nomes compostos longos ou palavras únicas gigantes */
+        
+        color: #000; 
+        text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+        
+        /* 4. AJUSTE: Garante que o texto fique centralizado horizontal e verticalmente */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%; /* Ocupa a altura total do crachá, centralizando o texto verticalmente */
+        box-sizing: border-box; /* Garante que as margens não alterem o tamanho total */
         }
 
         @media print {

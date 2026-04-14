@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crachás - 4 por página</title>
+    <title>Gerador de Crachás (4 por folha)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -14,133 +14,183 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            color: #333;
         }
         .controls {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
+            width: 100%;
+            max-width: 700px;
+            gap: 15px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
-        .controls textarea {
-            width: 80vw;
-            max-width: 600px;
-            padding: 10px;
+        textarea {
+            width: 100%;
+            padding: 12px;
             border-radius: 8px;
             border: 1px solid #ccc;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
         .btn {
             padding: 10px 20px;
-            background-color: #4A90E2;
-            color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 16px;
+            font-weight: bold;
+            transition: 0.2s;
         }
+        .btn-primary { background: #4A90E2; color: white; }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        .btn-print { background: #27ae60; color: white; }
+        
+        /* Layout de Impressão */
         .container {
             width: 21cm;
-            min-height: 29.7cm;
-            background-color: white;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            align-content: flex-start;
-            padding: 1cm 0;
-            box-sizing: border-box;
+            background: white;
+            padding: 0.5cm 0;
         }
         .cracha {
-            width: 9.5cm;
-            height: 13cm; /* Ajustado para caber 4 em um A4 */
-            border: 1px solid #ddd;
-            margin: 0.2cm;
+            width: 9.8cm;
+            height: 13.5cm; /* 4 por página A4 */
+            border: 1px dashed #ccc;
+            margin: 0.1cm;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
+            justify-content: center;
             position: relative;
-            background-color: #fff;
+            overflow: hidden;
             box-sizing: border-box;
             
-            /* IMAGEM DE FUNDO */
-            background-image: url(https://github.com/pnscpastoraldacatequese-commits/CrachaRetiroEucaristia/commit/44b13f2b69c4e77121331b4b6092ca49dd859298);
+            /* --- CONFIGURAÇÃO DA IMAGEM DE FUNDO --- */
+            background-image: url('URL_DA_SUA_IMAGEM_AQUI'); 
             background-size: cover;
             background-position: center;
-            background-repeat: no-repeat;
         }
-        .image-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            padding: 10px 20px;
+        .logo-container {
             position: absolute;
-            top: 0;
-            box-sizing: border-box;
+            top: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
         }
+        .logo-container img { height: 65px; }
         
         .nome {
-            font-size: 38px;
-            font-weight: bold;
+            font-size: 42px;
+            font-weight: 800;
+            text-align: center;
             text-transform: uppercase;
-            padding: 0 15px;
-            z-index: 2;
-            background-color: rgba(255,255,255,0.7); /* Fundo semi-transparente para leitura */
-            border-radius: 5px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.7); /* Melhora leitura sobre o fundo */
+            width: 90%;
+            border-radius: 10px;
+            word-wrap: break-word;
         }
 
         @media print {
-            @page { size: A4; margin: 0; }
-            body { background-color: white; padding: 0; }
+            body { background: white; padding: 0; }
             .controls { display: none; }
-            .container { box-shadow: none; padding: 0; width: 21cm; height: 29.7cm; }
-            .cracha { 
-                border: 1px solid #ccc; /* Borda suave para corte */
-                page-break-inside: avoid;
-            }
-            /* Quebra de página a cada 4 crachás */
-            .cracha:nth-child(4n+1) { page-break-before: always; }
-            .cracha:nth-child(1) { page-break-before: auto; }
+            .container { width: 21cm; padding: 0; }
+            .cracha { border: 1px solid #eee; page-break-inside: avoid; }
+            .cracha:nth-child(4n+5) { page-break-before: always; }
         }
     </style>
 </head>
 <body>
+
     <div class="controls">
-        <label>Cole a lista de nomes:</label>
-        <textarea id="inputNomesFinal" rows="10" placeholder="Nome 1, Nome 2..."></textarea>
-        <div class="btn-container">
-            <button class="btn" onclick="gerarCrachas()">Gerar Crachás</button>
-            <button class="btn" onclick="window.print()">Imprimir</button>
+        <label><b>1. Cole os nomes completos:</b></label>
+        <textarea id="inputRaw" rows="4" placeholder="João Silva, Maria Oliveira..."></textarea>
+        
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="processarEValidar()">Validar e Gerar Lista</button>
+        </div>
+
+        <label><b>2. Nomes processados (Edite se necessário):</b></label>
+        <textarea id="inputFinal" rows="4"></textarea>
+
+        <div class="btn-group">
+            <button class="btn btn-print" onclick="gerarCrachas()">Gerar Crachás</button>
+            <button class="btn btn-secondary" onclick="window.print()">Imprimir</button>
         </div>
     </div>
 
-    <div class="container" id="printContainer"></div>
+    <div class="container" id="container"></div>
 
     <script>
+        const PREPOSICOES = ['de', 'do', 'da', 'dos', 'das'];
+
+        function determineProcessedName(name, allNames) {
+            const parts = name.split(' ').filter(p => p.length > 0);
+            const firstName = parts[0];
+            const firstNameCount = allNames.filter(n => n.split(' ')[0].toUpperCase() === firstName.toUpperCase()).length;
+
+            if (firstNameCount === 1 || parts.length === 1) return firstName;
+
+            let currentParts = [firstName];
+            let i = 1;
+            while (i < parts.length) {
+                let next = parts[i];
+                currentParts.push(next);
+                i++;
+
+                if (PREPOSICOES.includes(next.toLowerCase()) && i < parts.length) {
+                    currentParts.push(parts[i]);
+                    i++;
+                }
+
+                const segment = currentParts.join(' ');
+                let isUnique = true;
+                for (const other of allNames) {
+                    if (other.toUpperCase() === name.toUpperCase()) continue;
+                    if (other.toUpperCase().startsWith(segment.toUpperCase())) {
+                        isUnique = false;
+                        break;
+                    }
+                }
+                if (isUnique) return segment;
+            }
+            return name;
+        }
+
+        function processarEValidar() {
+            const raw = document.getElementById('inputRaw').value;
+            const listaOriginal = raw.split(/[,\n]/).map(n => n.trim()).filter(n => n.length > 0);
+            const processados = listaOriginal.map(n => determineProcessedName(n, listaOriginal));
+            document.getElementById('inputFinal').value = processados.join(', ');
+        }
+
         function gerarCrachas() {
-            const nomesInput = document.getElementById('inputNomesFinal').value;
-            const nomes = nomesInput.split(/[,\n]/).map(n => n.trim()).filter(n => n.length > 0);
-            const container = document.getElementById('printContainer');
+            const finalInput = document.getElementById('inputFinal').value;
+            const nomes = finalInput.split(/[,\n]/).map(n => n.trim()).filter(n => n.length > 0);
+            const container = document.getElementById('container');
             container.innerHTML = '';
 
             nomes.forEach(nome => {
-                const cracha = document.createElement('div');
-                cracha.className = 'cracha';
+                const card = document.createElement('div');
+                card.className = 'cracha';
 
-                const imagesDiv = document.createElement('div');
-                imagesDiv.className = 'image-container';
-
-                imagesDiv.appendChild(imgP);
-                imagesDiv.appendChild(imgN);
-                
-                const nomeH1 = document.createElement('h1');
-                nomeH1.className = 'nome';
-                nomeH1.textContent = nome.toUpperCase();
-
-                cracha.appendChild(imagesDiv);
-                cracha.appendChild(nomeH1);
-                container.appendChild(cracha);
+                card.innerHTML = `
+                    <div class="logo-container">
+                        <img src="https://raw.githubusercontent.com/pnscpastoraldacatequese-commits/cracha/main/paroquia.png" alt="Logo">
+                        <img src="https://raw.githubusercontent.com/pnscpastoraldacatequese-commits/cracha/main/logonova.PNG" alt="Logo">
+                    </div>
+                    <div class="nome">${nome}</div>
+                `;
+                container.appendChild(card);
             });
         }
     </script>

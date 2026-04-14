@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Crachás (4 por folha)</title>
+    <title>Crachás - 4 por Folha</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -38,7 +38,6 @@
         .btn-group {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
         }
         .btn {
             padding: 10px 20px;
@@ -46,65 +45,55 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            transition: 0.2s;
         }
         .btn-primary { background: #4A90E2; color: white; }
-        .btn-secondary { background: #e0e0e0; color: #333; }
         .btn-print { background: #27ae60; color: white; }
-        
-        /* Layout de Impressão */
+
+        /* Estrutura da Folha A4 */
         .container {
             width: 21cm;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             background: white;
-            padding: 0.5cm 0;
         }
         .cracha {
-            width: 9.8cm;
-            height: 13.5cm; /* 4 por página A4 */
-            border: 1px dashed #ccc;
-            margin: 0.1cm;
+            width: 10cm; /* Ajustado para melhor aproveitamento */
+            height: 14cm; /* 4 crachás por A4 */
+            border: 1px solid #eee;
+            margin: 2px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             position: relative;
             overflow: hidden;
             box-sizing: border-box;
             
-            /* --- CONFIGURAÇÃO DA IMAGEM DE FUNDO --- */
+            /* IMAGEM DE FUNDO ÚNICA */
             background-image: url('URL_DA_SUA_IMAGEM_AQUI'); 
             background-size: cover;
             background-position: center;
         }
-        .logo-container {
-            position: absolute;
-            top: 15px;
-            width: 100%;
-            display: flex;
-            justify-content: space-around;
-        }
-        .logo-container img { height: 65px; }
         
         .nome {
-            font-size: 42px;
+            font-size: 48px;
             font-weight: 800;
             text-align: center;
             text-transform: uppercase;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.7); /* Melhora leitura sobre o fundo */
             width: 90%;
-            border-radius: 10px;
             word-wrap: break-word;
+            /* Se o fundo for escuro, mude color para white */
+            color: #000; 
+            /* Opcional: sombra leve para destacar o nome do fundo */
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
         }
 
         @media print {
+            @page { size: A4; margin: 0; }
             body { background: white; padding: 0; }
             .controls { display: none; }
-            .container { width: 21cm; padding: 0; }
-            .cracha { border: 1px solid #eee; page-break-inside: avoid; }
+            .container { width: 21cm; height: 29.7cm; padding: 0; }
+            .cracha { border: 0.1mm solid #ddd; page-break-inside: avoid; }
             .cracha:nth-child(4n+5) { page-break-before: always; }
         }
     </style>
@@ -113,18 +102,16 @@
 
     <div class="controls">
         <label><b>1. Cole os nomes completos:</b></label>
-        <textarea id="inputRaw" rows="4" placeholder="João Silva, Maria Oliveira..."></textarea>
+        <textarea id="inputRaw" rows="4" placeholder="Ex: João Silva, Maria de Souza..."></textarea>
         
-        <div class="btn-group">
-            <button class="btn btn-primary" onclick="processarEValidar()">Validar e Gerar Lista</button>
-        </div>
+        <button class="btn btn-primary" onclick="processarEValidar()">1. Processar Nomes (Diferenciar Iguais)</button>
 
-        <label><b>2. Nomes processados (Edite se necessário):</b></label>
+        <label><b>2. Nomes que serão impressos:</b></label>
         <textarea id="inputFinal" rows="4"></textarea>
 
         <div class="btn-group">
-            <button class="btn btn-print" onclick="gerarCrachas()">Gerar Crachás</button>
-            <button class="btn btn-secondary" onclick="window.print()">Imprimir</button>
+            <button class="btn btn-print" onclick="gerarCrachas()">2. Gerar Visualização</button>
+            <button class="btn btn-primary" style="background:#555" onclick="window.print()">3. Imprimir</button>
         </div>
     </div>
 
@@ -182,14 +169,7 @@
             nomes.forEach(nome => {
                 const card = document.createElement('div');
                 card.className = 'cracha';
-
-                card.innerHTML = `
-                    <div class="logo-container">
-                        <img src="https://raw.githubusercontent.com/pnscpastoraldacatequese-commits/cracha/main/paroquia.png" alt="Logo">
-                        <img src="https://raw.githubusercontent.com/pnscpastoraldacatequese-commits/cracha/main/logonova.PNG" alt="Logo">
-                    </div>
-                    <div class="nome">${nome}</div>
-                `;
+                card.innerHTML = `<div class="nome">${nome}</div>`;
                 container.appendChild(card);
             });
         }
